@@ -1,0 +1,1585 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model agents {
+  IDAgents                                    BigInt                      @id @default(autoincrement())
+  NomAgent                                    String?                     @db.VarChar(100)
+  Sexe                                        String?                     @db.VarChar(50)
+  Datenaiss                                   DateTime?                   @db.Date
+  Lieunaiss                                   String?                     @db.VarChar(75)
+  adresse                                     String?                     @db.VarChar(75)
+  Tel                                         String?                     @db.VarChar(25)
+  Cel                                         String?                     @db.VarChar(25)
+  Email                                       String?                     @db.VarChar(100)
+  FonctionAgent                               String?                     @db.VarChar(75)
+  Observations                                String?                     @db.VarChar(250)
+  photo                                       Bytes?
+  cheminphoto                                 String?                     @db.VarChar(255)
+  Login                                       String?                     @unique(map: "Login") @db.VarChar(150)
+  ValidationDossiers                          Int?                        @default(0) @db.TinyInt
+  Niveauhabilitation                          Decimal?                    @default(0.000000) @db.Decimal(24, 6)
+  PayeParCaisse                               Int?                        @default(0) @db.TinyInt
+  ValidationPieceCaisse                       Int?                        @default(0) @db.TinyInt
+  ValiderNoteDetail                           Int?                        @default(0) @db.TinyInt
+  MajTEC                                      Int?                        @default(0) @db.TinyInt
+  clients                                     clients[]
+  documents                                   documents[]
+  dossiers_dossiers_IdAgentSaisiToagents      dossiers[]                  @relation("dossiers_IdAgentSaisiToagents")
+  dossiers_dossiers_IdAgModiffToagents        dossiers[]                  @relation("dossiers_IdAgModiffToagents")
+  dossiers_dossiers_IdAgentValidationToagents dossiers[]                  @relation("dossiers_IdAgentValidationToagents")
+  factures                                    factures[]
+  liaisonagentsgroupes                        liaisonagentsgroupes[]
+  liaisondossiersdeclarants                   liaisondossiersdeclarants[]
+  ordrestransit                               ordrestransit[]
+  reglements                                  reglements[]
+  transports                                  transports[]
+
+  @@index([NomAgent], map: "WDIDX_Agents_NomAgent")
+}
+
+model articles {
+  IDArticles                             BigInt                 @id @default(autoincrement())
+  IDNotesDeDetails                       BigInt?                @default(0)
+  NumeroArticle                          Int?                   @default(0)
+  Origine                                String?                @default("0") @db.VarChar(5)
+  IDRegimeDeclaration                    BigInt?                @default(0)
+  FOB                                    Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  FRET                                   Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  ASSURANCES                             Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  BRUT                                   Float?                 @default(0)
+  NET                                    Float?                 @default(0)
+  QC                                     Float?                 @default(0)
+  QM                                     Float?                 @default(0)
+  CommissionFournisseur                  Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  IDDEVISEFOB                            BigInt?                @default(0)
+  IDDEVISEFRET                           BigInt?                @default(0)
+  IDDEVISEASS                            BigInt?                @default(0)
+  CAF                                    Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  CodeRegimeDeclaration                  String?                @default("0,00") @db.VarChar(10)
+  MontantTaxes                           Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  NTS                                    String?                @db.VarChar(15)
+  FOBCFA                                 Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  FRETCFA                                Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  ASSURANCESCFA                          Decimal?               @default(0.000000) @db.Decimal(24, 6)
+  IdAgent                                BigInt?                @default(0)
+  DPI                                    String?                @db.VarChar(50)
+  NBCOLIS                                Int?                   @default(0)
+  TitreExo                               String?                @db.VarChar(150)
+  devises_articles_IDDEVISEFOBTodevises  devises?               @relation("articles_IDDEVISEFOBTodevises", fields: [IDDEVISEFOB], references: [IDDevises], onDelete: NoAction, onUpdate: NoAction, map: "articles_ibfk_1")
+  devises_articles_IDDEVISEFRETTodevises devises?               @relation("articles_IDDEVISEFRETTodevises", fields: [IDDEVISEFRET], references: [IDDevises], onDelete: NoAction, onUpdate: NoAction, map: "articles_ibfk_2")
+  devises_articles_IDDEVISEASSTodevises  devises?               @relation("articles_IDDEVISEASSTodevises", fields: [IDDEVISEASS], references: [IDDevises], onDelete: NoAction, onUpdate: NoAction, map: "articles_ibfk_3")
+  liquidationsarticles                   liquidationsarticles[]
+
+  @@index([CodeRegimeDeclaration], map: "WDIDX_Articles_CodeRegimeDeclaration")
+  @@index([DPI], map: "WDIDX_Articles_DPI")
+  @@index([IDDEVISEASS], map: "WDIDX_Articles_IDDEVISEASS")
+  @@index([IDDEVISEFOB], map: "WDIDX_Articles_IDDEVISEFOB")
+  @@index([IDDEVISEFRET], map: "WDIDX_Articles_IDDEVISEFRET")
+  @@index([IDNotesDeDetails], map: "WDIDX_Articles_IDNotesDeDetails")
+  @@index([IDRegimeDeclaration], map: "WDIDX_Articles_IDRegimeDeclaration")
+  @@index([IdAgent], map: "WDIDX_Articles_IdAgent")
+  @@index([NTS], map: "WDIDX_Articles_NTS")
+  @@index([NumeroArticle], map: "WDIDX_Articles_NumeroArticle")
+  @@index([Origine], map: "WDIDX_Articles_Origine")
+  @@index([TitreExo], map: "WDIDX_Articles_TitreExo")
+}
+
+model billoflanding {
+  idbl                     BigInt             @id @default(autoincrement())
+  Exp_diteur               String?            @default("0") @map("Expéditeur") @db.VarChar(250)
+  Notify                   String?            @default("0") @db.VarChar(150)
+  IDAgents                 BigInt?            @default(0)
+  Consignee                String?            @db.VarChar(150)
+  PreAcheminePar           String?            @db.VarChar(150)
+  LieuDeReception          String?            @db.VarChar(150)
+  LieuDePaiementFret       String?            @db.VarChar(150)
+  NbreBLOriginaux          Int?               @default(0)
+  AdresseDeLivraisonFinale String?            @db.VarChar(250)
+  IDDossiers               BigInt?            @default(0)
+  Observations             String?            @db.VarChar(250)
+  DureeFranchise           Int?               @default(10)
+  nbreconteneurs           Int?               @default(0)
+  NumeroTitreTransport     String?            @db.VarChar(150)
+  Typetitretransport       String?            @db.VarChar(50)
+  Fournisseur              String?            @db.VarChar(150)
+  dossiers                 dossiers?          @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "billoflanding_ibfk_1")
+  chargementcamion         chargementcamion[]
+  conteneurbl              conteneurbl[]
+  groupage                 groupage[]
+
+  @@index([Exp_diteur], map: "WDIDX_BillOfLanding_Expéditeur")
+  @@index([Fournisseur], map: "WDIDX_BillOfLanding_Fournisseur")
+  @@index([IDAgents], map: "WDIDX_BillOfLanding_IDAgents")
+  @@index([IDDossiers], map: "WDIDX_BillOfLanding_IDDossiers")
+  @@index([Notify], map: "WDIDX_BillOfLanding_Notify")
+  @@index([NumeroTitreTransport], map: "WDIDX_BillOfLanding_NumeroTitreTransport")
+  @@index([Typetitretransport], map: "WDIDX_BillOfLanding_Typetitretransport")
+}
+
+model billoflandingmaya {
+  idbl                     BigInt  @id @default(autoincrement())
+  Exp_diteur               String? @default("0") @map("Expéditeur") @db.VarChar(250)
+  Notify                   String? @default("0") @db.VarChar(150)
+  IDAgents                 BigInt? @default(0)
+  Consignee                String? @db.VarChar(150)
+  PreAcheminePar           String? @db.VarChar(150)
+  LieuDeReception          String? @db.VarChar(150)
+  LieuDePaiementFret       String? @db.VarChar(150)
+  NbreBLOriginaux          Int?    @default(0)
+  AdresseDeLivraisonFinale String? @db.VarChar(250)
+  IDDossiers               BigInt? @default(0)
+  Observations             String? @db.VarChar(250)
+  DureeFranchise           Int?    @default(10)
+  nbreconteneurs           Int?    @default(0)
+  NumeroTitreTransport     String? @db.VarChar(150)
+  Typetitretransport       String? @db.VarChar(50)
+  Fournisseur              String? @db.VarChar(150)
+  nbrecolis                String? @db.VarChar(150)
+  Poids                    String? @db.VarChar(150)
+  NumDeclaration           String? @db.VarChar(150)
+  conteneurs               String? @db.VarChar(250)
+  Compagnie                String? @db.VarChar(150)
+  Moyendetransport         String? @db.VarChar(250)
+  villedepart              String? @db.VarChar(150)
+  villearrivee             String? @db.VarChar(150)
+  Volumem3                 String? @db.VarChar(150)
+
+  @@index([Exp_diteur], map: "WDIDX_BillOfLandingMaya_Expéditeur")
+  @@index([Fournisseur], map: "WDIDX_BillOfLandingMaya_Fournisseur")
+  @@index([IDAgents], map: "WDIDX_BillOfLandingMaya_IDAgents")
+  @@index([IDDossiers], map: "WDIDX_BillOfLandingMaya_IDDossiers")
+  @@index([Notify], map: "WDIDX_BillOfLandingMaya_Notify")
+  @@index([NumDeclaration], map: "WDIDX_BillOfLandingMaya_NumDeclaration")
+  @@index([NumeroTitreTransport], map: "WDIDX_BillOfLandingMaya_NumeroTitreTransport")
+  @@index([Typetitretransport], map: "WDIDX_BillOfLandingMaya_Typetitretransport")
+}
+
+model booking {
+  IDBooking                 BigInt    @id @default(autoincrement())
+  ObjetBooking              String?   @db.VarChar(150)
+  DateBooking               DateTime? @db.Date
+  IDDossiers                BigInt?   @default(0)
+  InstructionsParticulieres String?   @db.VarChar(250)
+  Numerobooking             String?   @unique(map: "Numerobooking") @db.VarChar(50)
+  DepotSouhaite             String?   @db.VarChar(250)
+  AdresseDepot              String?   @db.VarChar(150)
+  ContactTCD1               String?   @db.VarChar(150)
+  PhoneTCD2                 String?   @db.VarChar(150)
+  Observations              String?   @db.VarChar(250)
+  TerminalChargement        String?   @db.VarChar(350)
+  IdAgent                   BigInt?   @default(0)
+  dossiers                  dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "booking_ibfk_1")
+
+  @@index([AdresseDepot], map: "WDIDX_Booking_AdresseDepot")
+  @@index([ContactTCD1], map: "WDIDX_Booking_ContactTCD1")
+  @@index([DateBooking], map: "WDIDX_Booking_DateBooking")
+  @@index([DepotSouhaite], map: "WDIDX_Booking_DepotSouhaite")
+  @@index([IDDossiers], map: "WDIDX_Booking_IDDossiers")
+  @@index([IdAgent], map: "WDIDX_Booking_IdAgent")
+  @@index([ObjetBooking], map: "WDIDX_Booking_ObjetBooking")
+  @@index([PhoneTCD2], map: "WDIDX_Booking_PhoneTCD2")
+  @@index([TerminalChargement], map: "WDIDX_Booking_TerminalChargement")
+}
+
+model bordereauxdelivraisons {
+  IDBordereauxDeLivraisons BigInt    @id @default(autoincrement())
+  CodeBordereauDeLivraison String?   @unique(map: "CodeBordereauDeLivraison") @db.VarChar(50)
+  DateBordereauLivraison   DateTime? @db.Date
+  IDDossiers               BigInt?   @default(0)
+  Enlevement               DateTime? @db.Date
+  numerocamion             String?   @db.VarChar(50)
+  datedebutmagasinage      DateTime? @db.Date
+  datefinmagasinage        DateTime? @db.Date
+  RTransmisClient          Int?      @default(0) @db.TinyInt
+  AdresseDeLivraison       String?   @db.VarChar(150)
+  Destinataire             String?   @db.VarChar(200)
+  Exp_diteur               String?   @map("Expéditeur") @db.VarChar(250)
+  MS                       String?   @db.VarChar(250)
+  NUMBL                    String?   @db.VarChar(50)
+  PROVENANCE               String?   @db.VarChar(250)
+  NumeroDeclaration        String?   @db.VarChar(50)
+  CodeDossier              String?   @db.VarChar(50)
+  NumeroOT                 String?   @db.VarChar(150)
+  LibelleMoyenTransport    String?   @db.VarChar(250)
+  DateArriv_eNav           DateTime? @map("DateArrivéeNav") @db.Date
+  CodeOrdreTransport       String?   @db.VarChar(50)
+  dossiers                 dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "bordereauxdelivraisons_ibfk_1")
+
+  @@index([AdresseDeLivraison], map: "WDIDX_BordereauxDeLivraisons_AdresseDeLivraison")
+  @@index([CodeDossier], map: "WDIDX_BordereauxDeLivraisons_CodeDossier")
+  @@index([CodeOrdreTransport], map: "WDIDX_BordereauxDeLivraisons_CodeOrdreTransport")
+  @@index([Destinataire], map: "WDIDX_BordereauxDeLivraisons_Destinataire")
+  @@index([Exp_diteur], map: "WDIDX_BordereauxDeLivraisons_Expéditeur")
+  @@index([IDDossiers], map: "WDIDX_BordereauxDeLivraisons_IDDossiers")
+  @@index([LibelleMoyenTransport], map: "WDIDX_BordereauxDeLivraisons_LibelleMoyenTransport")
+  @@index([NumeroDeclaration], map: "WDIDX_BordereauxDeLivraisons_NumeroDeclaration")
+  @@index([NumeroOT], map: "WDIDX_BordereauxDeLivraisons_NumeroOT")
+  @@index([numerocamion], map: "WDIDX_BordereauxDeLivraisons_numerocamion")
+}
+
+model chargementcamion {
+  IDChargementCamion BigInt         @id @default(autoincrement())
+  MarquesEtNumeros   String?        @db.VarChar(150)
+  nbreconteneurs     Int?           @default(0)
+  ModeEmballage      String?        @db.VarChar(250)
+  NatureMarchandise  String?        @db.VarChar(250)
+  PoidsBrutKg        Float?         @default(0)
+  Volumem3           Float?         @default(0)
+  UnitePoids         String?        @db.VarChar(50)
+  UniteVolume        String?        @db.VarChar(50)
+  idblltalvibooking  BigInt?        @default(0)
+  IdAgent            BigInt?        @default(0)
+  billoflanding      billoflanding? @relation(fields: [idblltalvibooking], references: [idbl], onDelete: NoAction, onUpdate: NoAction, map: "chargementcamion_ibfk_1")
+
+  @@index([IdAgent], map: "WDIDX_ChargementCamion_IdAgent")
+  @@index([MarquesEtNumeros], map: "WDIDX_ChargementCamion_MarquesEtNumeros")
+  @@index([NatureMarchandise], map: "WDIDX_ChargementCamion_NatureMarchandise")
+  @@index([idblltalvibooking], map: "WDIDX_ChargementCamion_idblltalvibooking")
+}
+
+model clients {
+  IDCLIENTS                        BigInt                    @id @default(autoincrement())
+  NomRS                            String?                   @db.VarChar(100)
+  adresseClient                    String?                   @db.VarChar(75)
+  TelClient                        String?                   @db.VarChar(25)
+  IdAgent                          BigInt?                   @default(0)
+  CelClient                        String?                   @db.VarChar(25)
+  EmailClient                      String?                   @db.VarChar(250)
+  Observations                     String?                   @db.VarChar(250)
+  cheminfiche                      String?                   @db.VarChar(255)
+  IDStatuts                        BigInt?                   @default(0)
+  Saisile                          DateTime?                 @db.Date
+  Modifiele                        DateTime?                 @db.Date
+  idagentmodification              BigInt?                   @default(0)
+  NINEA                            String?                   @db.VarChar(50)
+  EncoursAutorise                  Decimal?                  @default(0.000000) @db.Decimal(24, 6)
+  AssuranceCredit                  Decimal?                  @default(0.000000) @db.Decimal(24, 6)
+  CheminLettreEXO                  String?                   @db.VarChar(255)
+  TauxRemise                       Float?                    @default(0)
+  ExonereTVA                       Int?                      @default(0) @db.TinyInt
+  PersonneContact                  String?                   @db.VarChar(150)
+  EmailPersonneContact             String?                   @db.VarChar(150)
+  TelPersonneContact               String?                   @db.VarChar(50)
+  TypeClient                       String?                   @db.VarChar(5)
+  CodeClient                       String?                   @db.VarChar(50)
+  faxClient                        String?                   @db.VarChar(50)
+  DelaiReglement                   Int?                      @default(0)
+  DelaiReglementDouane             Int?                      @default(0)
+  NumExoneration                   String?                   @db.VarChar(50)
+  NumCompteSAARI                   String?                   @db.VarChar(50)
+  TauxCommissionDDouane            Float?                    @default(0)
+  TauxCommissionDebours            Float?                    @default(0)
+  sappliqueTousDebours             Int?                      @default(0) @db.TinyInt
+  FactureDouaneAvecCommissionEtTVA Int?                      @default(0) @db.TinyInt
+  statuts                          statuts?                  @relation(fields: [IDStatuts], references: [IDStatuts], onDelete: NoAction, onUpdate: NoAction, map: "clients_ibfk_1")
+  agents                           agents?                   @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "clients_ibfk_2")
+  comptesclients                   comptesclients[]
+  dossiers                         dossiers[]
+  relances                         relances[]
+  rubriquesdescommissions          rubriquesdescommissions[]
+
+  @@index([CodeClient], map: "WDIDX_CLIENTS_CodeClient")
+  @@index([DelaiReglement], map: "WDIDX_CLIENTS_DelaiReglement")
+  @@index([EmailClient], map: "WDIDX_CLIENTS_EmailClient")
+  @@index([IDStatuts], map: "WDIDX_CLIENTS_IDStatuts")
+  @@index([IdAgent], map: "WDIDX_CLIENTS_IdAgent")
+  @@index([NINEA], map: "WDIDX_CLIENTS_NINEA")
+  @@index([NomRS], map: "WDIDX_CLIENTS_NomRS")
+  @@index([NumExoneration], map: "WDIDX_CLIENTS_NumExoneration")
+  @@index([TelClient], map: "WDIDX_CLIENTS_TelClient")
+  @@index([TypeClient], map: "WDIDX_CLIENTS_TypeClient")
+  @@index([adresseClient], map: "WDIDX_CLIENTS_adresseClient")
+  @@index([idagentmodification], map: "WDIDX_CLIENTS_idagentmodification")
+}
+
+model complementstaxes {
+  IDComplementsTaxes BigInt  @id @default(autoincrement())
+  IDTaxes            BigInt? @default(0)
+  idtaxesComplements BigInt? @default(0)
+  CodeTaxe           String? @db.VarChar(10)
+  CodeTaxeComplement String? @db.VarChar(10)
+  taxes              taxes?  @relation(fields: [IDTaxes], references: [IDTaxes], onDelete: NoAction, onUpdate: NoAction, map: "complementstaxes_ibfk_1")
+
+  @@index([CodeTaxe], map: "WDIDX_ComplementsTaxes_CodeTaxe")
+  @@index([CodeTaxeComplement], map: "WDIDX_ComplementsTaxes_CodeTaxeComplement")
+  @@index([IDTaxes], map: "WDIDX_ComplementsTaxes_IDTaxes")
+  @@index([idtaxesComplements], map: "WDIDX_ComplementsTaxes_idtaxesComplements")
+}
+
+model comptesclients {
+  IDComptesClients         BigInt                     @id @default(autoincrement())
+  LibelleCompteClients     String?                    @db.VarChar(50)
+  Observations             String?                    @db.VarChar(250)
+  IDCLIENTS                BigInt?                    @default(0)
+  IdAgent                  BigInt?                    @default(0)
+  SoldeCompteClient        Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  TotalCredit              Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  TotalDebit               Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  clients                  clients?                   @relation(fields: [IDCLIENTS], references: [IDCLIENTS], onDelete: NoAction, onUpdate: NoAction, map: "comptesclients_ibfk_1")
+  mouvementscomptesclients mouvementscomptesclients[]
+
+  @@index([IDCLIENTS], map: "WDIDX_ComptesClients_IDCLIENTS")
+  @@index([IdAgent], map: "WDIDX_ComptesClients_IdAgent")
+  @@index([LibelleCompteClients], map: "WDIDX_ComptesClients_LibelleCompteClients")
+}
+
+model comptesmails {
+  IDComptesMails         BigInt  @id @default(autoincrement())
+  adressemail            String? @unique(map: "adressemail") @db.VarChar(255)
+  MotdePasse             String? @db.VarChar(150)
+  ServeurPOP             String? @db.VarChar(250)
+  PortServeurPOP         Int?    @default(0)
+  ServeurSMTP            String? @db.VarChar(250)
+  PortServeurSMTP        Int?    @default(0)
+  ServeurIMAPENTRANT     String? @db.VarChar(250)
+  ServeurIMAPSORTANT     String? @db.VarChar(250)
+  PortServeurIMAPENTRANT Int?    @default(0)
+  PortServeurIMAPSORTANT Int?    @default(0)
+  LibelleMail            String? @db.VarChar(250)
+}
+
+model conteneurbl {
+  IDConteneurBL           BigInt               @id @default(autoincrement())
+  NumeroTC                String?              @db.VarChar(150)
+  TypeTC                  String?              @db.VarChar(150)
+  TareTC                  Float?               @default(0)
+  DimensionTC             Float?               @default(0)
+  UnitePoids              String?              @db.VarChar(50)
+  UniteVolumeMaeDimension String?              @db.VarChar(50)
+  idblltalvibooking       BigInt?              @default(0)
+  Contenu                 String?              @db.LongText
+  IDAgents                BigInt?              @default(0)
+  Affecte                 Int?                 @default(0) @db.TinyInt
+  Rendu                   Int?                 @default(0) @db.TinyInt
+  DateRetourConteneur     DateTime?            @db.Date
+  SEL                     Int?                 @default(0) @db.TinyInt
+  NumeroPlomb             String?              @db.VarChar(150)
+  billoflanding           billoflanding?       @relation(fields: [idblltalvibooking], references: [idbl], onDelete: NoAction, onUpdate: NoAction, map: "conteneurbl_ibfk_1")
+  contenusconteneurs      contenusconteneurs[]
+
+  @@index([IDAgents], map: "WDIDX_ConteneurBL_IDAgents")
+  @@index([NumeroTC], map: "WDIDX_ConteneurBL_NumeroTC")
+  @@index([TypeTC], map: "WDIDX_ConteneurBL_TypeTC")
+  @@index([idblltalvibooking], map: "WDIDX_ConteneurBL_idblltalvibooking")
+}
+
+model contenuconteneurordretrbordereauliv {
+  IDContenuConteneurOrdreTrBordereauLiv BigInt  @id @default(autoincrement())
+  CodeOrdreTransport                    String? @db.VarChar(50)
+  CodeBordereauDeLivraison              String? @db.VarChar(50)
+  NumeroTC                              String? @db.VarChar(150)
+  TypeTC                                String? @db.VarChar(150)
+  ObjetTC                               String? @db.VarChar(50)
+  Quantite                              Float?  @default(0)
+  PoidsNet                              Float?  @default(0)
+  Unite                                 String? @db.VarChar(50)
+
+  @@index([CodeBordereauDeLivraison], map: "WDIDX_ContenuConteneurOrdreTrBordereauLiv_CodeBordereauDeLi00001")
+  @@index([CodeOrdreTransport], map: "WDIDX_ContenuConteneurOrdreTrBordereauLiv_CodeOrdreTransport")
+  @@index([NumeroTC], map: "WDIDX_ContenuConteneurOrdreTrBordereauLiv_NumeroTC")
+  @@index([TypeTC], map: "WDIDX_ContenuConteneurOrdreTrBordereauLiv_TypeTC")
+}
+
+model contenusconteneurs {
+  IDContenusConteneurs BigInt       @id @default(autoincrement())
+  IDConteneurBL        BigInt?      @default(0)
+  ObjetConteneur       String?      @db.VarChar(150)
+  Quantite             Float?       @default(0)
+  PoidsTotalNet        Float?       @default(0)
+  Unite                String?      @db.VarChar(50)
+  IdAgent              BigInt?      @default(0)
+  conteneurbl          conteneurbl? @relation(fields: [IDConteneurBL], references: [IDConteneurBL], onDelete: NoAction, onUpdate: NoAction, map: "contenusconteneurs_ibfk_1")
+
+  @@index([IDConteneurBL], map: "WDIDX_ContenusConteneurs_IDConteneurBL")
+  @@index([IdAgent], map: "WDIDX_ContenusConteneurs_IdAgent")
+  @@index([ObjetConteneur], map: "WDIDX_ContenusConteneurs_ObjetConteneur")
+}
+
+model cotations {
+  IDCotations               BigInt                      @id @default(autoincrement())
+  IdagentSaisie             BigInt?                     @default(0)
+  DateCotation              DateTime?                   @db.Date
+  MontantHTCotation         Decimal?                    @default(0.000000) @db.Decimal(24, 6)
+  MontantTVACotation        Decimal?                    @default(0.000000) @db.Decimal(24, 6)
+  MontantTTCCotation        Decimal?                    @default(0.000000) @db.Decimal(24, 6)
+  Observations              String?                     @db.VarChar(250)
+  Acceptee                  Int?                        @default(0) @db.TinyInt
+  NumeroCotation            String?                     @unique(map: "NumeroCotation") @db.VarChar(50)
+  NumeroTitreTransport      String?                     @db.VarChar(150)
+  NumeroDeclaration         String?                     @unique(map: "NumeroDeclaration") @db.VarChar(50)
+  Moyendetransport          String?                     @db.VarChar(250)
+  PROVENANCE                String?                     @db.VarChar(250)
+  LieuArrivee               String?                     @db.VarChar(250)
+  LibelleProduit            String?                     @db.VarChar(250)
+  NombreColis               String?                     @db.VarChar(150)
+  Poids                     String?                     @db.VarChar(150)
+  Contenant                 String?                     @db.VarChar(250)
+  IDDossiers                BigInt?                     @default(0)
+  CheminDocumentPDF         String?                     @db.VarChar(255)
+  liaisoncotationsrubriques liaisoncotationsrubriques[]
+
+  @@index([DateCotation], map: "WDIDX_Cotations_DateCotation")
+  @@index([IDDossiers], map: "WDIDX_Cotations_IDDossiers")
+  @@index([IdagentSaisie], map: "WDIDX_Cotations_IdagentSaisie")
+  @@index([NumeroTitreTransport], map: "WDIDX_Cotations_NumeroTitreTransport")
+}
+
+model couleurs {
+  IDCouleurs BigInt @id @default(autoincrement())
+  ndjours    Int?   @default(0)
+  Rouge      Int?   @default(0)
+  Vert       Int?   @default(0)
+  Bleu       Int?   @default(0)
+}
+
+model declarations {
+  IDDeclarations    BigInt           @id @default(autoincrement())
+  DateDeclaration   DateTime?        @db.Timestamp(0)
+  IdAgent           BigInt?          @default(0)
+  Observations      String?          @db.VarChar(250)
+  NumeroDeclaration String?          @unique(map: "NumeroDeclaration") @db.VarChar(50)
+  DateBAE           DateTime?        @db.Date
+  IDDossiers        BigInt?          @default(0)
+  RegimeDeclaration String?          @db.VarChar(10)
+  NumeroBureau      String?          @db.VarChar(50)
+  notesdedetails    notesdedetails[]
+
+  @@index([DateBAE], map: "WDIDX_Declarations_DateBAE")
+  @@index([DateDeclaration], map: "WDIDX_Declarations_DateDeclaration")
+  @@index([IDDossiers], map: "WDIDX_Declarations_IDDossiers")
+  @@index([IdAgent], map: "WDIDX_Declarations_IdAgent")
+  @@index([NumeroBureau], map: "WDIDX_Declarations_NumeroBureau")
+}
+
+model detailfactures {
+  IDDetailFactures BigInt   @id @default(autoincrement())
+  CodeRubrique     String?  @db.VarChar(25)
+  NumFacture       String?  @db.VarChar(50)
+  libelleRubrique  String?  @db.VarChar(200)
+  Montant          Decimal? @default(0.000000) @db.Decimal(24, 6)
+  CodeTVA          Int?     @default(0)
+  LibModele        String?  @db.VarChar(50)
+  NumCompteGen     String?  @db.VarChar(10)
+
+  @@index([CodeRubrique], map: "WDIDX_DetailFactures_CodeRubrique")
+  @@index([CodeTVA], map: "WDIDX_DetailFactures_CodeTVA")
+  @@index([LibModele], map: "WDIDX_DetailFactures_LibModele")
+  @@index([NumCompteGen], map: "WDIDX_DetailFactures_NumCompteGen")
+  @@index([NumFacture], map: "WDIDX_DetailFactures_NumFacture")
+  @@index([libelleRubrique], map: "WDIDX_DetailFactures_libelleRubrique")
+}
+
+model detentions {
+  IDDetentions   BigInt      @id @default(autoincrement())
+  Zone           String?     @db.VarChar(50)
+  DureeDetention String?     @default("0") @db.VarChar(50)
+  enlevement     enlevement?
+
+  @@index([Zone], map: "WDIDX_Detentions_Zone")
+}
+
+model devises {
+  IDDevises                               BigInt     @id @default(autoincrement())
+  libelle                                 String?    @db.VarChar(100)
+  Symbole                                 String?    @db.VarChar(5)
+  TauxChangeDeviseCFA                     Decimal?   @default(0.000000) @db.Decimal(24, 6)
+  Maj                                     DateTime?  @db.Timestamp(0)
+  IdAgent                                 BigInt?    @default(0)
+  articles_articles_IDDEVISEFOBTodevises  articles[] @relation("articles_IDDEVISEFOBTodevises")
+  articles_articles_IDDEVISEFRETTodevises articles[] @relation("articles_IDDEVISEFRETTodevises")
+  articles_articles_IDDEVISEASSTodevises  articles[] @relation("articles_IDDEVISEASSTodevises")
+
+  @@index([IdAgent], map: "WDIDX_Devises_IdAgent")
+  @@index([libelle], map: "WDIDX_Devises_libelle")
+}
+
+model documents {
+  IDDocuments         BigInt          @id @default(autoincrement())
+  LibelleDocument     String?         @db.VarChar(250)
+  DescriptionDocument String?         @db.Text
+  CheminDocument      String?         @db.VarChar(255)
+  IdAgent             BigInt?         @default(0)
+  NumeroDocument      String?         @db.VarChar(150)
+  IDTypesDocuments    BigInt?
+  IDDossiers          BigInt?         @default(0)
+  DatePublication     DateTime?       @db.Date
+  Observations        String?         @db.VarChar(250)
+  typesdocuments      typesdocuments? @relation(fields: [IDTypesDocuments], references: [IDTypesDocuments], onDelete: NoAction, onUpdate: NoAction, map: "documents_ibfk_1")
+  dossiers            dossiers?       @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "documents_ibfk_2")
+  agents              agents?         @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "documents_ibfk_3")
+
+  @@index([IDDossiers], map: "WDIDX_Documents_IDDossiers")
+  @@index([IDTypesDocuments], map: "WDIDX_Documents_IDTypesDocuments")
+  @@index([IdAgent], map: "WDIDX_Documents_IdAgent")
+  @@index([NumeroDocument], map: "WDIDX_Documents_NumeroDocument")
+}
+
+model domaineactivite {
+  IDDomaineActivite             BigInt                          @id @default(autoincrement())
+  LibelleDomaineActivite        String?                         @db.VarChar(150)
+  Code                          String?                         @unique(map: "Code") @db.VarChar(5)
+  liaisontiersdomainesactivites liaisontiersdomainesactivites[]
+
+  @@index([LibelleDomaineActivite], map: "WDIDX_DomaineActivite_LibelleDomaineActivite")
+}
+
+model dossiers {
+  IDDossiers                                BigInt                        @id @default(autoincrement())
+  DateOuvertureDossiers                     DateTime?                     @db.Date
+  IdEtapeDossiers                           BigInt?                       @default(0)
+  SaisiLe                                   DateTime?                     @db.Date
+  IdAgentSaisi                              BigInt?                       @default(0)
+  IdAgModiff                                BigInt?                       @default(0)
+  DateModif                                 DateTime?                     @db.Date
+  IdAgentValidation                         BigInt?                       @default(0)
+  DateValidataion                           DateTime?                     @db.Date
+  IDCLIENTS                                 BigInt?                       @default(0)
+  Libelle                                   String?                       @db.VarChar(250)
+  DescriptionDossiers                       String?                       @db.Text
+  Facturable                                Int?                          @default(0) @db.TinyInt
+  NatureDossier                             String?                       @default("0") @db.VarChar(50)
+  TypeDossier                               String?                       @db.VarChar(50)
+  ModeExpedition                            String?                       @db.VarChar(50)
+  CodeDossier                               String?                       @unique(map: "CodeDossier") @db.VarChar(50)
+  Observations                              String?                       @db.VarChar(250)
+  Typedocument                              String?                       @db.VarChar(5)
+  NumeroOrbus                               String?                       @db.VarChar(50)
+  CodeClient                                String?                       @db.VarChar(50)
+  PersonneContact                           String?                       @db.VarChar(150)
+  TelPersonneContact                        String?                       @db.VarChar(50)
+  EmailPersonneContact                      String?                       @db.VarChar(150)
+  EtapeCotation                             Int?                          @default(0) @db.TinyInt
+  idagentsfacturable                        BigInt?                       @default(0)
+  Datefaturable                             DateTime?                     @db.Timestamp(0)
+  cheminfiche                               String?                       @db.VarChar(255)
+  CodeDossierCourt                          String?                       @db.VarChar(50)
+  NumeroDPI                                 String?                       @db.VarChar(51)
+  GenereSur                                 String?                       @db.VarChar(50)
+  DateTransmission                          DateTime?                     @db.Date
+  billoflanding                             billoflanding[]
+  booking                                   booking[]
+  bordereauxdelivraisons                    bordereauxdelivraisons[]
+  documents                                 documents[]
+  clients                                   clients?                      @relation(fields: [IDCLIENTS], references: [IDCLIENTS], onDelete: NoAction, onUpdate: NoAction, map: "dossiers_ibfk_1")
+  etapesdossiers                            etapesdossiers?               @relation(fields: [IdEtapeDossiers], references: [IDEtapesDossiers], onDelete: NoAction, onUpdate: NoAction, map: "dossiers_ibfk_2")
+  agents_dossiers_IdAgentSaisiToagents      agents?                       @relation("dossiers_IdAgentSaisiToagents", fields: [IdAgentSaisi], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "dossiers_ibfk_3")
+  agents_dossiers_IdAgModiffToagents        agents?                       @relation("dossiers_IdAgModiffToagents", fields: [IdAgModiff], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "dossiers_ibfk_4")
+  agents_dossiers_IdAgentValidationToagents agents?                       @relation("dossiers_IdAgentValidationToagents", fields: [IdAgentValidation], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "dossiers_ibfk_5")
+  factures                                  factures[]
+  facturesfournisseursclients               facturesfournisseursclients[]
+  facturesrecues                            facturesrecues[]
+  liaisondossiersdeclarants                 liaisondossiersdeclarants[]
+  livraisons                                livraisons[]
+  miseenlivraison                           miseenlivraison[]
+  notesdedetails                            notesdedetails[]
+  operations                                operations[]
+  ordresdetransport                         ordresdetransport[]
+  ordrestransit                             ordrestransit?
+  piecescaisses                             piecescaisses[]
+
+  @@index([CodeClient], map: "WDIDX_Dossiers_CodeClient")
+  @@index([CodeDossierCourt], map: "WDIDX_Dossiers_CodeDossierCourt")
+  @@index([DateOuvertureDossiers], map: "WDIDX_Dossiers_DateOuvertureDossiers")
+  @@index([DateTransmission], map: "WDIDX_Dossiers_DateTransmission")
+  @@index([Datefaturable], map: "WDIDX_Dossiers_Datefaturable")
+  @@index([GenereSur], map: "WDIDX_Dossiers_GenereSur")
+  @@index([IDCLIENTS], map: "WDIDX_Dossiers_IDCLIENTS")
+  @@index([IdAgModiff], map: "WDIDX_Dossiers_IdAgModiff")
+  @@index([IdAgentSaisi], map: "WDIDX_Dossiers_IdAgentSaisi")
+  @@index([IdAgentValidation], map: "WDIDX_Dossiers_IdAgentValidation")
+  @@index([IdEtapeDossiers], map: "WDIDX_Dossiers_IdEtapeDossiers")
+  @@index([Libelle], map: "WDIDX_Dossiers_Libelle")
+  @@index([NumeroOrbus], map: "WDIDX_Dossiers_NumeroOrbus")
+  @@index([PersonneContact], map: "WDIDX_Dossiers_PersonneContact")
+  @@index([SaisiLe], map: "WDIDX_Dossiers_SaisiLe")
+  @@index([TelPersonneContact], map: "WDIDX_Dossiers_TelPersonneContact")
+  @@index([TypeDossier], map: "WDIDX_Dossiers_TypeDossier")
+}
+
+model elementspiecescaisses {
+  IDRubriquesPiecesCaisses BigInt?        @default(0)
+  IDElementsPiecesCaisses  BigInt         @id @default(autoincrement())
+  Montant                  Decimal?       @default(0.000000) @db.Decimal(24, 6)
+  IDPiecesCaisses          BigInt?        @default(0)
+  CodeRubrique             String?        @db.VarChar(25)
+  libelleRubrique          String?        @db.VarChar(200)
+  rubriques                rubriques?     @relation(fields: [IDRubriquesPiecesCaisses], references: [IDRubriques], onDelete: NoAction, onUpdate: NoAction, map: "elementspiecescaisses_ibfk_1")
+  piecescaisses            piecescaisses? @relation(fields: [IDPiecesCaisses], references: [IDPiecesCaisses], onDelete: NoAction, onUpdate: NoAction, map: "elementspiecescaisses_ibfk_2")
+
+  @@index([CodeRubrique], map: "WDIDX_ElementsPiecesCaisses_CodeRubrique")
+  @@index([IDPiecesCaisses], map: "WDIDX_ElementsPiecesCaisses_IDPiecesCaisses")
+  @@index([IDRubriquesPiecesCaisses], map: "WDIDX_ElementsPiecesCaisses_IDRubriquesPiecesCaisses")
+  @@index([libelleRubrique], map: "WDIDX_ElementsPiecesCaisses_libelleRubrique")
+}
+
+model enlevement {
+  IDBordereauxDeLivraisons BigInt?     @default(0)
+  IDEnlevement             BigInt      @id @default(autoincrement())
+  DateEnlevent             DateTime?   @db.Timestamp(0)
+  DateRetourConteneur      DateTime?   @db.Timestamp(0)
+  numerocamion             String?     @db.VarChar(50)
+  Observations             String?     @db.VarChar(250)
+  IDDetentions             BigInt?     @unique(map: "IDDetentions")
+  EIR                      String?     @db.VarChar(50)
+  detentions               detentions? @relation(fields: [IDDetentions], references: [IDDetentions], onDelete: NoAction, onUpdate: NoAction, map: "enlevement_ibfk_1")
+
+  @@index([DateEnlevent], map: "WDIDX_Enlevement_DateEnlevent")
+  @@index([DateRetourConteneur], map: "WDIDX_Enlevement_DateRetourConteneur")
+  @@index([IDBordereauxDeLivraisons], map: "WDIDX_Enlevement_IDBordereauxDeLivraisons")
+  @@index([numerocamion], map: "WDIDX_Enlevement_numerocamion")
+}
+
+model etapesdossiers {
+  IDEtapesDossiers      BigInt     @id @default(autoincrement())
+  libelleEtapesDossiers String?    @db.VarChar(100)
+  Observations          String?    @db.VarChar(250)
+  dossiers              dossiers[]
+
+  @@index([libelleEtapesDossiers], map: "WDIDX_EtapesDossiers_libelleEtapesDossiers")
+}
+
+model factures {
+  IDFactures               BigInt                     @id @default(autoincrement())
+  Datefacture              DateTime?                  @db.Date
+  DateEcheance             DateTime?                  @db.Date
+  MontantHTFacture         Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  MontantTVAFacture        Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  MontantTTCFacture        Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  MontantRegleFacture      Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  ReliquatFacture          Decimal?                   @default(0.000000) @db.Decimal(24, 6)
+  IDAgents                 BigInt?                    @default(0)
+  IDDossiers               BigInt?                    @default(0)
+  NumeroFacture            String?                    @unique(map: "NumeroFacture") @db.VarChar(50)
+  RefCotation              String?                    @db.VarChar(255)
+  CheminDocumentPDF        String?                    @db.VarChar(255)
+  Validee                  Int?                       @default(0) @db.TinyInt
+  Envoyee                  Int?                       @default(0) @db.TinyInt
+  DateHeureEnvoi           DateTime?                  @db.Timestamp(0)
+  Aregler                  Int?                       @default(0) @db.TinyInt
+  Observations             String?                    @db.VarChar(252)
+  idagentvalidee           BigInt?                    @default(0)
+  datevalidee              DateTime?                  @db.Date
+  idagentenvoye            BigInt?                    @default(0)
+  dateenvoye               DateTime?                  @db.Date
+  dossiers                 dossiers?                  @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "factures_ibfk_1")
+  agents                   agents?                    @relation(fields: [IDAgents], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "factures_ibfk_2")
+  liaisonfacturesrubriques liaisonfacturesrubriques[]
+  reglements               reglements[]
+
+  @@index([DateEcheance], map: "WDIDX_Factures_DateEcheance")
+  @@index([Datefacture], map: "WDIDX_Factures_Datefacture")
+  @@index([IDAgents], map: "WDIDX_Factures_IDAgents")
+  @@index([IDDossiers], map: "WDIDX_Factures_IDDossiers")
+}
+
+model facturesfournisseursclients {
+  IDFacturesFournisseursClients BigInt    @id @default(autoincrement())
+  Fournisseur                   String?   @db.VarChar(150)
+  Datefacture                   DateTime? @db.Date
+  IDDevises                     BigInt?
+  Montant                       Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  IDDossiers                    BigInt?   @default(0)
+  IDIncoterm                    BigInt?   @default(0)
+  Observations                  String?   @db.VarChar(250)
+  dossiers                      dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "facturesfournisseursclients_ibfk_1")
+  incoterm                      incoterm? @relation(fields: [IDIncoterm], references: [IDIncoterm], onDelete: NoAction, onUpdate: NoAction, map: "facturesfournisseursclients_ibfk_2")
+
+  @@index([Datefacture], map: "WDIDX_FacturesFournisseursClients_Datefacture")
+  @@index([IDDevises], map: "WDIDX_FacturesFournisseursClients_IDDevises")
+  @@index([IDDossiers], map: "WDIDX_FacturesFournisseursClients_IDDossiers")
+  @@index([IDIncoterm], map: "WDIDX_FacturesFournisseursClients_IDIncoterm")
+}
+
+model facturesrecues {
+  IDFacturesRecues               BigInt                           @id @default(autoincrement())
+  IDDossiers                     BigInt?                          @default(0)
+  IDTiers                        BigInt?                          @default(0)
+  MontantTTC                     Decimal?                         @default(0.000000) @db.Decimal(24, 6)
+  IdAgent                        BigInt?                          @default(0)
+  IDRubriques                    BigInt?                          @default(0)
+  CodeRubrique                   String?                          @db.VarChar(25)
+  libelleRubrique                String?                          @db.VarChar(200)
+  DdateHeureSaisi                DateTime?                        @db.Timestamp(0)
+  Observations                   String?                          @db.VarChar(250)
+  NomTiers                       String?                          @db.VarChar(250)
+  NumeroFacture                  String?                          @db.VarChar(150)
+  dossiers                       dossiers?                        @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "facturesrecues_ibfk_1")
+  liaisonrubriquesfacturesrecues liaisonrubriquesfacturesrecues[]
+
+  @@index([CodeRubrique], map: "WDIDX_FacturesRecues_CodeRubrique")
+  @@index([IDDossiers], map: "WDIDX_FacturesRecues_IDDossiers")
+  @@index([IDRubriques], map: "WDIDX_FacturesRecues_IDRubriques")
+  @@index([IDTiers], map: "WDIDX_FacturesRecues_IDTiers")
+  @@index([IdAgent], map: "WDIDX_FacturesRecues_IdAgent")
+  @@index([NomTiers], map: "WDIDX_FacturesRecues_NomTiers")
+  @@index([NumeroFacture], map: "WDIDX_FacturesRecues_NumeroFacture")
+  @@index([libelleRubrique], map: "WDIDX_FacturesRecues_libelleRubrique")
+}
+
+model fichesynthetiquedossier {
+  IDFicheSynthetiqueDossier BigInt    @id @default(autoincrement())
+  DateOuvertureDossiers     DateTime? @db.Date
+  CodeDossier               String?   @db.VarChar(50)
+  NatureDossier             String?   @db.VarChar(50)
+  CodeClient                String?   @db.VarChar(50)
+  NomClient                 String?   @db.VarChar(250)
+  adresseClient             String?   @db.VarChar(175)
+  NumeroOT                  String?   @db.VarChar(150)
+  DateOT                    DateTime? @db.Date
+  DateHeureReceptionOT      DateTime? @db.Timestamp(0)
+  DateArriveePrevue         DateTime? @db.Date
+  LibelleMoyensTransport    String?   @db.VarChar(250)
+  DateArriveeNavire         DateTime? @db.Date
+  PROVENANCE                String?   @db.VarChar(250)
+  NumeroTitreTransport      String?   @db.VarChar(150)
+  NomFournisseur            String?   @db.VarChar(150)
+  Observationss             String?   @db.VarChar(255)
+  IDDossiers                BigInt?   @default(0)
+  IdAgent                   BigInt?   @default(0)
+  NatureMarchandise         String?   @db.VarChar(250)
+  CodeDossierCourt          String?   @db.VarChar(50)
+  PoidsTotal                Float?    @default(0)
+  conteneurs                String?   @db.VarChar(255)
+  NBCOLIS                   Int?      @default(0)
+
+  @@index([CodeClient], map: "WDIDX_FicheSynthetiqueDossier_CodeClient")
+  @@index([CodeDossier], map: "WDIDX_FicheSynthetiqueDossier_CodeDossier")
+  @@index([CodeDossierCourt], map: "WDIDX_FicheSynthetiqueDossier_CodeDossierCourt")
+  @@index([IDDossiers], map: "WDIDX_FicheSynthetiqueDossier_IDDossiers")
+  @@index([IdAgent], map: "WDIDX_FicheSynthetiqueDossier_IdAgent")
+  @@index([LibelleMoyensTransport], map: "WDIDX_FicheSynthetiqueDossier_LibelleMoyensTransport")
+  @@index([NatureMarchandise], map: "WDIDX_FicheSynthetiqueDossier_NatureMarchandise")
+  @@index([NomClient], map: "WDIDX_FicheSynthetiqueDossier_NomClient")
+  @@index([NumeroOT], map: "WDIDX_FicheSynthetiqueDossier_NumeroOT")
+}
+
+model groupage {
+  IDGroupage                      BigInt         @id @default(autoincrement())
+  UnitePoids                      String?        @db.VarChar(50)
+  classdutarif                    String?        @db.VarChar(10)
+  NumeroArticleMarchandise        String?        @db.VarChar(50)
+  PoidsTaxation                   Float?         @default(0)
+  TarifMontant                    Decimal?       @default(0.000000) @db.Decimal(24, 6)
+  Total                           Decimal?       @default(0.000000) @db.Decimal(24, 6)
+  NatureEtQuantiteDesMarchandises String?        @db.VarChar(250)
+  idblltalvibooking               BigInt?        @default(0)
+  nbreconteneurs                  Int?           @default(0)
+  IdAgent                         BigInt?        @default(0)
+  billoflanding                   billoflanding? @relation(fields: [idblltalvibooking], references: [idbl], onDelete: NoAction, onUpdate: NoAction, map: "groupage_ibfk_1")
+
+  @@index([IdAgent], map: "WDIDX_Groupage_IdAgent")
+  @@index([idblltalvibooking], map: "WDIDX_Groupage_idblltalvibooking")
+}
+
+model groupes {
+  IDGroupes            BigInt                 @id @default(autoincrement())
+  LibelleGroupe        String?                @db.VarChar(150)
+  Observations         String?                @db.VarChar(250)
+  liaisonagentsgroupes liaisonagentsgroupes[]
+
+  @@index([LibelleGroupe], map: "WDIDX_Groupes_LibelleGroupe")
+}
+
+model incoterm {
+  IDIncoterm                  BigInt                        @id @default(autoincrement())
+  CodeIncoterm                String?                       @db.VarChar(10)
+  Observations                String?                       @db.VarChar(250)
+  facturesfournisseursclients facturesfournisseursclients[]
+  ordrestransit               ordrestransit[]
+
+  @@index([CodeIncoterm], map: "WDIDX_Incoterm_CodeIncoterm")
+}
+
+model journal {
+  IDJOURNAL        BigInt    @id @default(autoincrement())
+  CodeJournal      String?   @db.VarChar(50)
+  Datefacture      DateTime? @db.Date
+  NumPiece         Int?      @default(0)
+  NumFacture       String?   @db.VarChar(50)
+  CodeDossier      String?   @db.VarChar(50)
+  NumCompteSAARI   String?   @db.VarChar(50)
+  NumCompteTiers   String?   @db.VarChar(50)
+  Libelle          String?   @db.VarChar(250)
+  DateEcheance     DateTime? @db.Date
+  Debit            Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  Credit           Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  DateDebut        DateTime? @db.Date
+  DateFin          DateTime? @db.Date
+  IDCLIENTS        BigInt?   @default(0)
+  CodeDossierCourt String?   @db.VarChar(50)
+
+  @@index([CodeDossier], map: "WDIDX_JOURNAL_CodeDossier")
+  @@index([CodeDossierCourt], map: "WDIDX_JOURNAL_CodeDossierCourt")
+  @@index([CodeJournal], map: "WDIDX_JOURNAL_CodeJournal")
+  @@index([DateDebut], map: "WDIDX_JOURNAL_DateDebut")
+  @@index([DateEcheance], map: "WDIDX_JOURNAL_DateEcheance")
+  @@index([DateFin], map: "WDIDX_JOURNAL_DateFin")
+  @@index([Datefacture], map: "WDIDX_JOURNAL_Datefacture")
+  @@index([IDCLIENTS], map: "WDIDX_JOURNAL_IDCLIENTS")
+  @@index([Libelle], map: "WDIDX_JOURNAL_Libelle")
+  @@index([NumCompteSAARI], map: "WDIDX_JOURNAL_NumCompteSAARI")
+  @@index([NumCompteTiers], map: "WDIDX_JOURNAL_NumCompteTiers")
+  @@index([NumFacture], map: "WDIDX_JOURNAL_NumFacture")
+  @@index([NumPiece], map: "WDIDX_JOURNAL_NumPiece")
+}
+
+model liaisonagentsgroupes {
+  IDLiaisonAgentsGroupes BigInt   @id @default(autoincrement())
+  IdAgent                BigInt?  @default(0)
+  IDGroupes              BigInt?  @default(0)
+  agents                 agents?  @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "liaisonagentsgroupes_ibfk_1")
+  groupes                groupes? @relation(fields: [IDGroupes], references: [IDGroupes], onDelete: NoAction, onUpdate: NoAction, map: "liaisonagentsgroupes_ibfk_2")
+
+  @@index([IDGroupes], map: "WDIDX_LiaisonAgentsGroupes_IDGroupes")
+  @@index([IdAgent], map: "WDIDX_LiaisonAgentsGroupes_IdAgent")
+}
+
+model liaisoncotationsrubriques {
+  IDLiaisonCotationsRubriques BigInt     @id @default(autoincrement())
+  IDRubriques                 BigInt?    @default(0)
+  IDCotation                  BigInt?    @default(0)
+  MontantHTCotation           Decimal?   @default(0.000000) @db.Decimal(24, 6)
+  CodeRubrique                String?    @db.VarChar(25)
+  libelleRubrique             String?    @db.VarChar(200)
+  Complement                  String?    @db.VarChar(30)
+  NumCompteSAARI              String?    @db.VarChar(50)
+  rubriques                   rubriques? @relation(fields: [IDRubriques], references: [IDRubriques], onDelete: NoAction, onUpdate: NoAction, map: "liaisoncotationsrubriques_ibfk_1")
+  cotations                   cotations? @relation(fields: [IDCotation], references: [IDCotations], onDelete: NoAction, onUpdate: NoAction, map: "liaisoncotationsrubriques_ibfk_2")
+
+  @@index([CodeRubrique], map: "WDIDX_LiaisonCotationsRubriques_CodeRubrique")
+  @@index([IDCotation], map: "WDIDX_LiaisonCotationsRubriques_IDCotation")
+  @@index([IDRubriques], map: "WDIDX_LiaisonCotationsRubriques_IDRubriques")
+  @@index([NumCompteSAARI], map: "WDIDX_LiaisonCotationsRubriques_NumCompteSAARI")
+  @@index([libelleRubrique], map: "WDIDX_LiaisonCotationsRubriques_libelleRubrique")
+}
+
+model liaisondossiersdeclarants {
+  IDLiaisonDossiersDeclarants BigInt    @id @default(autoincrement())
+  IDDossiers                  BigInt?   @default(0)
+  idDeclarants                BigInt?   @default(0)
+  DateAffectation             DateTime? @db.Date
+  dossiers                    dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "liaisondossiersdeclarants_ibfk_1")
+  agents                      agents?   @relation(fields: [idDeclarants], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "liaisondossiersdeclarants_ibfk_2")
+
+  @@index([DateAffectation], map: "WDIDX_LiaisonDossiersDeclarants_DateAffectation")
+  @@index([IDDossiers], map: "WDIDX_LiaisonDossiersDeclarants_IDDossiers")
+  @@index([idDeclarants], map: "WDIDX_LiaisonDossiersDeclarants_idDeclarants")
+}
+
+model liaisonfacturesrubriques {
+  IDLiaisonFacturesRubriques BigInt     @id @default(autoincrement())
+  IDFactures                 BigInt?    @default(0)
+  IDRubriques                BigInt?    @default(0)
+  MontantHTFactures          Decimal?   @default(0.000000) @db.Decimal(24, 6)
+  CodeRubrique               String?    @db.VarChar(25)
+  libelleRubrique            String?    @db.VarChar(200)
+  Complement                 String?    @db.VarChar(30)
+  NumCompteSAAI              String?    @db.VarChar(50)
+  factures                   factures?  @relation(fields: [IDFactures], references: [IDFactures], onDelete: NoAction, onUpdate: NoAction, map: "liaisonfacturesrubriques_ibfk_1")
+  rubriques                  rubriques? @relation(fields: [IDRubriques], references: [IDRubriques], onDelete: NoAction, onUpdate: NoAction, map: "liaisonfacturesrubriques_ibfk_2")
+
+  @@index([CodeRubrique], map: "WDIDX_LiaisonFacturesRubriques_CodeRubrique")
+  @@index([IDFactures], map: "WDIDX_LiaisonFacturesRubriques_IDFactures")
+  @@index([IDRubriques], map: "WDIDX_LiaisonFacturesRubriques_IDRubriques")
+  @@index([NumCompteSAAI], map: "WDIDX_LiaisonFacturesRubriques_NumCompteSAAI")
+  @@index([libelleRubrique], map: "WDIDX_LiaisonFacturesRubriques_libelleRubrique")
+}
+
+model liaisonltaproduits {
+  IDLiaisonLTAProduits BigInt    @id @default(autoincrement())
+  idProduit            BigInt?   @default(0)
+  idlta                BigInt?   @default(0)
+  Qtte                 Float?    @default(0)
+  unitequantite        String?   @db.VarChar(50)
+  VolumeMarchandises   Float?    @default(0)
+  UniteVolume          String?   @db.VarChar(50)
+  Valeur               Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  Observations         String?   @db.VarChar(250)
+  produits             produits? @relation(fields: [idProduit], references: [IDProduits], onDelete: NoAction, onUpdate: NoAction, map: "liaisonltaproduits_ibfk_1")
+
+  @@index([idProduit], map: "WDIDX_LiaisonLTAProduits_idProduit")
+  @@index([idlta], map: "WDIDX_LiaisonLTAProduits_idlta")
+}
+
+model liaisonlviproduits {
+  IDLiaisonLVIProduits BigInt    @id @default(autoincrement())
+  idlvi                BigInt?   @unique(map: "idlvi")
+  idProduit            BigInt?   @default(0)
+  Qtte                 Float?    @default(0)
+  unitequantite        String?   @db.VarChar(50)
+  VolumeMarchandises   Float?    @default(0)
+  UniteVolume          String?   @db.VarChar(50)
+  Valeur               Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  Observations         String?   @db.VarChar(250)
+  produits             produits? @relation(fields: [idProduit], references: [IDProduits], onDelete: NoAction, onUpdate: NoAction, map: "liaisonlviproduits_ibfk_1")
+
+  @@index([idProduit], map: "WDIDX_LiaisonLVIProduits_idProduit")
+}
+
+model liaisonotdocumentsaremettre {
+  IDARemettre           BigInt            @id @default(autoincrement())
+  IDOrdreTransit        BigInt?           @default(0)
+  idtypesDocumentot     BigInt?           @default(0)
+  Observations          String?           @db.VarChar(250)
+  Recu                  Int?              @default(0) @db.TinyInt
+  DateReceptionDocument DateTime?         @db.Timestamp(0)
+  Aremettre             Int?              @default(0) @db.TinyInt
+  LibelleDocument       String?           @db.VarChar(250)
+  typesdocumentsot      typesdocumentsot? @relation(fields: [idtypesDocumentot], references: [IDTypesDocumentsOT], onDelete: NoAction, onUpdate: NoAction, map: "liaisonotdocumentsaremettre_ibfk_1")
+  ordrestransit         ordrestransit?    @relation(fields: [IDOrdreTransit], references: [IDOrdresTransit], onDelete: NoAction, onUpdate: NoAction, map: "liaisonotdocumentsaremettre_ibfk_2")
+
+  @@index([DateReceptionDocument], map: "WDIDX_LiaisonOTDocumentsARemettre_DateReceptionDocument")
+  @@index([IDOrdreTransit], map: "WDIDX_LiaisonOTDocumentsARemettre_IDOrdreTransit")
+  @@index([LibelleDocument], map: "WDIDX_LiaisonOTDocumentsARemettre_LibelleDocument")
+  @@index([idtypesDocumentot], map: "WDIDX_LiaisonOTDocumentsARemettre_idtypesDocumentot")
+}
+
+model liaisonregimeot {
+  IDOrdresTransit   BigInt?        @default(0)
+  IDLiaisonRegimeOT BigInt         @id @default(autoincrement())
+  IDRegimeOT        BigInt?        @default(0)
+  regimeot          regimeot?      @relation(fields: [IDRegimeOT], references: [IDRegimeOT], onDelete: NoAction, onUpdate: NoAction, map: "liaisonregimeot_ibfk_1")
+  ordrestransit     ordrestransit? @relation(fields: [IDOrdresTransit], references: [IDOrdresTransit], onDelete: NoAction, onUpdate: NoAction, map: "liaisonregimeot_ibfk_2")
+
+  @@index([IDOrdresTransit], map: "WDIDX_LiaisonRegimeOT_IDOrdresTransit")
+  @@index([IDRegimeOT], map: "WDIDX_LiaisonRegimeOT_IDRegimeOT")
+}
+
+model liaisonrubriquesfacturesrecues {
+  IDLiaisonRubriquesFacturesRecues BigInt          @id @default(autoincrement())
+  IDRubriques                      BigInt?         @default(0)
+  IDFacturesRecues                 BigInt?         @default(0)
+  MontantRubrique                  Decimal?        @default(0.000000) @db.Decimal(24, 6)
+  rubriques                        rubriques?      @relation(fields: [IDRubriques], references: [IDRubriques], onDelete: NoAction, onUpdate: NoAction, map: "liaisonrubriquesfacturesrecues_ibfk_1")
+  facturesrecues                   facturesrecues? @relation(fields: [IDFacturesRecues], references: [IDFacturesRecues], onDelete: NoAction, onUpdate: NoAction, map: "liaisonrubriquesfacturesrecues_ibfk_2")
+
+  @@index([IDFacturesRecues], map: "WDIDX_LiaisonRubriquesFacturesRecues_IDFacturesRecues")
+  @@index([IDRubriques], map: "WDIDX_LiaisonRubriquesFacturesRecues_IDRubriques")
+}
+
+model liaisontiersdomainesactivites {
+  IDLiaisonTiersDomainesActivites BigInt           @id @default(autoincrement())
+  IDTiers                         BigInt?          @default(0)
+  IDDomaineActivite               BigInt?          @default(0)
+  domaineactivite                 domaineactivite? @relation(fields: [IDDomaineActivite], references: [IDDomaineActivite], onDelete: NoAction, onUpdate: NoAction, map: "liaisontiersdomainesactivites_ibfk_1")
+  tiers                           tiers?           @relation(fields: [IDTiers], references: [IDTiers], onDelete: NoAction, onUpdate: NoAction, map: "liaisontiersdomainesactivites_ibfk_2")
+
+  @@index([IDDomaineActivite], map: "WDIDX_LiaisonTiersDomainesActivites_IDDomaineActivite")
+  @@index([IDTiers], map: "WDIDX_LiaisonTiersDomainesActivites_IDTiers")
+}
+
+model lieux {
+  IDLieux                                   BigInt       @id @default(autoincrement())
+  NomLieu                                   String?      @db.VarChar(250)
+  Observations                              String?      @db.VarChar(250)
+  TypeLieu                                  String?      @db.VarChar(150)
+  IDPays                                    BigInt?      @default(0)
+  codePays3                                 String?      @db.VarChar(3)
+  pays                                      pays?        @relation(fields: [IDPays], references: [IDPays], onDelete: NoAction, onUpdate: NoAction, map: "lieux_ibfk_1")
+  transports_transports_IdLieuDepartTolieux transports[] @relation("transports_IdLieuDepartTolieux")
+  transports_transports_idLieuArriveTolieux transports[] @relation("transports_idLieuArriveTolieux")
+
+  @@index([IDPays], map: "WDIDX_Lieux_IDPays")
+  @@index([NomLieu], map: "WDIDX_Lieux_NomLieu")
+  @@index([codePays3], map: "WDIDX_Lieux_codePays3")
+}
+
+model liquidationsarticles {
+  IDTaux                 BigInt?   @default(0)
+  IDLiquidationsArticles BigInt    @id @default(autoincrement())
+  IDTaxes                BigInt?   @default(0)
+  IDArticles             BigInt?   @default(0)
+  CodeTaxe               String?   @db.VarChar(10)
+  MontantLiquide         Decimal?  @default(0.000000) @db.Decimal(24, 6)
+  IdAgent                BigInt?   @default(0)
+  LibelleTaxe            String?   @db.VarChar(150)
+  LibelleTaxeComplet     String?   @db.VarChar(250)
+  articles               articles? @relation(fields: [IDArticles], references: [IDArticles], onDelete: NoAction, onUpdate: NoAction, map: "liquidationsarticles_ibfk_1")
+  taux                   taux?     @relation(fields: [IDTaux], references: [IDTaux], onDelete: NoAction, onUpdate: NoAction, map: "liquidationsarticles_ibfk_2")
+
+  @@index([CodeTaxe], map: "WDIDX_LiquidationsArticles_CodeTaxe")
+  @@index([IDArticles], map: "WDIDX_LiquidationsArticles_IDArticles")
+  @@index([IDTaux], map: "WDIDX_LiquidationsArticles_IDTaux")
+  @@index([IDTaxes], map: "WDIDX_LiquidationsArticles_IDTaxes")
+  @@index([IdAgent], map: "WDIDX_LiquidationsArticles_IdAgent")
+  @@index([LibelleTaxe], map: "WDIDX_LiquidationsArticles_LibelleTaxe")
+  @@index([LibelleTaxeComplet], map: "WDIDX_LiquidationsArticles_LibelleTaxeComplet")
+}
+
+model livraisons {
+  IDLivraisons          BigInt    @id @default(autoincrement())
+  DateLivraison         DateTime? @db.Date
+  IDTiers               BigInt?   @default(0)
+  Livre                 Int?      @default(0) @db.TinyInt
+  ObservationsLivraison String?   @db.VarChar(250)
+  IDDossiers            BigInt?   @default(0)
+  NumPregate            String?   @db.VarChar(50)
+  CodeLivraison         String?   @db.VarChar(50)
+  dossiers              dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "livraisons_ibfk_1")
+
+  @@index([CodeLivraison], map: "WDIDX_Livraisons_CodeLivraison")
+  @@index([DateLivraison], map: "WDIDX_Livraisons_DateLivraison")
+  @@index([IDDossiers], map: "WDIDX_Livraisons_IDDossiers")
+  @@index([IDTiers], map: "WDIDX_Livraisons_IDTiers")
+  @@index([Livre], map: "WDIDX_Livraisons_Livre")
+  @@index([NumPregate], map: "WDIDX_Livraisons_NumPregate")
+}
+
+model miseenlivraison {
+  IDMiseEnLivraison      BigInt    @id @default(autoincrement())
+  IDDossiers             BigInt?   @default(0)
+  DateMiseEnLivraison    DateTime? @db.Date
+  DateRemiseContremaitre DateTime? @db.Date
+  Idcontremaitre         BigInt?   @default(0)
+  observationsML         String?   @db.VarChar(250)
+  Pregate                String?   @db.VarChar(50)
+  dossiers               dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "miseenlivraison_ibfk_1")
+
+  @@index([DateMiseEnLivraison], map: "WDIDX_MiseEnLivraison_DateMiseEnLivraison")
+  @@index([DateRemiseContremaitre], map: "WDIDX_MiseEnLivraison_DateRemiseContremaitre")
+  @@index([IDDossiers], map: "WDIDX_MiseEnLivraison_IDDossiers")
+  @@index([Idcontremaitre], map: "WDIDX_MiseEnLivraison_Idcontremaitre")
+  @@index([Pregate], map: "WDIDX_MiseEnLivraison_Pregate")
+}
+
+model modesreglements {
+  IDModesReglements BigInt       @id @default(autoincrement())
+  libelle           String?      @db.VarChar(100)
+  reglements        reglements[]
+
+  @@index([libelle], map: "WDIDX_ModesReglements_libelle")
+}
+
+model mouvementscomptesclients {
+  IDComptesClients           BigInt?         @default(0)
+  IDMouvementsComptesClients BigInt          @id @default(autoincrement())
+  libelle                    String?         @db.VarChar(100)
+  DateMouvement              DateTime?       @db.Date
+  MontantMouvement           Decimal?        @default(0.000000) @db.Decimal(24, 6)
+  Sens                       String?         @db.VarChar(50)
+  Observations               String?         @db.VarChar(250)
+  IdAgent                    BigInt?         @default(0)
+  Etat                       String?         @db.VarChar(2)
+  IdModeReglement            BigInt?         @default(0)
+  IDCLEFET                   BigInt?         @default(0)
+  comptesclients             comptesclients? @relation(fields: [IDComptesClients], references: [IDComptesClients], onDelete: NoAction, onUpdate: NoAction, map: "mouvementscomptesclients_ibfk_1")
+
+  @@index([DateMouvement], map: "WDIDX_MouvementsComptesClients_DateMouvement")
+  @@index([Etat], map: "WDIDX_MouvementsComptesClients_Etat")
+  @@index([IDCLEFET], map: "WDIDX_MouvementsComptesClients_IDCLEFET")
+  @@index([IDComptesClients], map: "WDIDX_MouvementsComptesClients_IDComptesClients")
+  @@index([IdAgent], map: "WDIDX_MouvementsComptesClients_IdAgent")
+  @@index([IdModeReglement], map: "WDIDX_MouvementsComptesClients_IdModeReglement")
+  @@index([libelle], map: "WDIDX_MouvementsComptesClients_libelle")
+}
+
+model moyenstransport {
+  IDMoyensTransport      BigInt                @id @default(autoincrement())
+  LibelleMoyensTransport String?               @db.VarChar(250)
+  idtypeMoyensTransport  BigInt?               @default(0)
+  Observations           String?               @db.VarChar(250)
+  IDTiers                BigInt?               @default(0)
+  typesmoyenstransport   typesmoyenstransport? @relation(fields: [idtypeMoyensTransport], references: [IDTypesMoyensTransport], onDelete: NoAction, onUpdate: NoAction, map: "moyenstransport_ibfk_1")
+  transports             transports[]
+
+  @@index([IDTiers], map: "WDIDX_MoyensTransport_IDTiers")
+  @@index([LibelleMoyensTransport], map: "WDIDX_MoyensTransport_LibelleMoyensTransport")
+  @@index([idtypeMoyensTransport], map: "WDIDX_MoyensTransport_idtypeMoyensTransport")
+}
+
+model notesdedetails {
+  IDNotesDeDetails             BigInt        @id @default(autoincrement())
+  MontantCAFTotalCFA           Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  IDDossiers                   BigInt?       @default(0)
+  ORBUS                        String?       @db.VarChar(50)
+  NINEA                        String?       @db.VarChar(50)
+  REPERTOIRE                   String?       @unique(map: "REPERTOIRE") @db.VarChar(50)
+  IDDeclarations               BigInt?       @default(0)
+  MontantFOBTotalCFA           Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  MontantFretTotalCFA          Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  MontantAssuranceTotalCFA     Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  CodeRegimeDeclaration        String?       @db.VarChar(5)
+  CodeProvenance               String?       @db.VarChar(5)
+  MontantLiquidation           Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  IdAgent                      BigInt?       @default(0)
+  MontantFOBTotalDevise        Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  MontantFretTotalDevise       Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  MontantAssurancesTotalDevise Decimal?      @default(0.000000) @db.Decimal(24, 6)
+  Valide                       Int?          @default(0) @db.TinyInt
+  DPI                          String?       @db.VarChar(255)
+  PoidsBrutTotal               Float?        @default(0)
+  PoidsNetTotal                Float?        @default(0)
+  dossiers                     dossiers?     @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "notesdedetails_ibfk_1")
+  declarations                 declarations? @relation(fields: [IDDeclarations], references: [IDDeclarations], onDelete: NoAction, onUpdate: NoAction, map: "notesdedetails_ibfk_2")
+
+  @@index([CodeProvenance], map: "WDIDX_NotesDeDetails_CodeProvenance")
+  @@index([CodeRegimeDeclaration], map: "WDIDX_NotesDeDetails_CodeRegimeDeclaration")
+  @@index([IDDeclarations], map: "WDIDX_NotesDeDetails_IDDeclarations")
+  @@index([IDDossiers], map: "WDIDX_NotesDeDetails_IDDossiers")
+  @@index([IdAgent], map: "WDIDX_NotesDeDetails_IdAgent")
+  @@index([NINEA], map: "WDIDX_NotesDeDetails_NINEA")
+  @@index([ORBUS], map: "WDIDX_NotesDeDetails_ORBUS")
+}
+
+model operations {
+  IDOperations    BigInt          @id @default(autoincrement())
+  libelle         String?         @db.VarChar(100)
+  Observations    String?         @db.VarChar(250)
+  IDTiers         BigInt?         @default(0)
+  IDDossiers1     BigInt?         @default(0)
+  IdAgent         BigInt?         @default(0)
+  DateOperation   DateTime?       @db.Timestamp(0)
+  idtypeOperation BigInt?         @default(0)
+  IdAgentRealise  BigInt?         @default(0)
+  DureeOperation  Decimal?        @db.Decimal(19, 0)
+  AvanceRetard    Decimal?        @db.Decimal(19, 0)
+  dossiers        dossiers?       @relation(fields: [IDDossiers1], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "operations_ibfk_1")
+  typeoperations  typeoperations? @relation(fields: [idtypeOperation], references: [IDTypeOperations], onDelete: NoAction, onUpdate: NoAction, map: "operations_ibfk_2")
+
+  @@index([DateOperation], map: "WDIDX_Operations_DateOperation")
+  @@index([IDDossiers1], map: "WDIDX_Operations_IDDossiers1")
+  @@index([IDTiers], map: "WDIDX_Operations_IDTiers")
+  @@index([IdAgent], map: "WDIDX_Operations_IdAgent")
+  @@index([IdAgentRealise], map: "WDIDX_Operations_IdAgentRealise")
+  @@index([idtypeOperation], map: "WDIDX_Operations_idtypeOperation")
+  @@index([libelle], map: "WDIDX_Operations_libelle")
+}
+
+model ordresdetransport {
+  IDOrdresDeTransport            BigInt    @id @default(autoincrement())
+  IDDossiers                     BigInt?   @default(0)
+  TransporteuretAdresse          String?   @default("0") @db.VarChar(250)
+  DateTransmissionAuTransporteur DateTime? @db.Date
+  Contremaitre                   String?   @db.VarChar(250)
+  IdAgent                        BigInt?   @default(0)
+  Numeserie                      String?   @unique(map: "Numeserie") @db.VarChar(50)
+  CodeOrdreTransport             String?   @db.VarChar(50)
+  DateOrdreTransport             DateTime? @db.Date
+  Contenu                        String?   @db.VarChar(255)
+  Introduction                   String?   @db.VarChar(250)
+  Pregate                        String?   @db.VarChar(50)
+  BL                             String?   @db.VarChar(50)
+  NumDeclaration                 String?   @db.VarChar(150)
+  DateDeclaration                DateTime? @db.Date
+  AdresseDeLivraison             String?   @db.VarChar(150)
+  CodeOrdreTransit               String?   @db.VarChar(50)
+  CodeDossier                    String?   @db.VarChar(50)
+  for_ulepolitesse               String?   @map("forùulepolitesse") @db.VarChar(250)
+  sectionlivraison               String?   @db.VarChar(250)
+  sectioncontremaitre            String?   @db.VarChar(250)
+  dossiers                       dossiers? @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "ordresdetransport_ibfk_1")
+
+  @@index([AdresseDeLivraison], map: "WDIDX_OrdresDeTransport_AdresseDeLivraison")
+  @@index([BL], map: "WDIDX_OrdresDeTransport_BL")
+  @@index([CodeDossier], map: "WDIDX_OrdresDeTransport_CodeDossier")
+  @@index([CodeOrdreTransit], map: "WDIDX_OrdresDeTransport_CodeOrdreTransit")
+  @@index([CodeOrdreTransport], map: "WDIDX_OrdresDeTransport_CodeOrdreTransport")
+  @@index([Contremaitre], map: "WDIDX_OrdresDeTransport_Contremaitre")
+  @@index([DateDeclaration], map: "WDIDX_OrdresDeTransport_DateDeclaration")
+  @@index([DateOrdreTransport], map: "WDIDX_OrdresDeTransport_DateOrdreTransport")
+  @@index([IDDossiers], map: "WDIDX_OrdresDeTransport_IDDossiers")
+  @@index([IdAgent], map: "WDIDX_OrdresDeTransport_IdAgent")
+  @@index([NumDeclaration], map: "WDIDX_OrdresDeTransport_NumDeclaration")
+  @@index([Pregate], map: "WDIDX_OrdresDeTransport_Pregate")
+  @@index([TransporteuretAdresse], map: "WDIDX_OrdresDeTransport_TransporteuretAdresse")
+}
+
+model ordrestransit {
+  IDOrdresTransit             BigInt                        @id @default(autoincrement())
+  NumeroOT                    String?                       @db.VarChar(150)
+  DateOT                      DateTime?                     @db.Date
+  DateReceptionOT             DateTime?                     @db.Timestamp(0)
+  IdAgent                     BigInt?                       @default(0)
+  IDDossiers                  BigInt?                       @unique(map: "IDDossiers") @default(0)
+  NumeroSerie                 String?                       @db.VarChar(150)
+  Idincoterms                 BigInt?                       @default(0)
+  BSCExiste                   Int?                          @default(0) @db.TinyInt
+  AssuranceExiste             Int?                          @default(0) @db.TinyInt
+  Observations                String?                       @db.VarChar(250)
+  DateExpedition              DateTime?                     @db.Date
+  AdresseDeLivraison          String?                       @db.VarChar(150)
+  PROVENANCE                  String?                       @default("0") @db.VarChar(250)
+  NatureProduits              String?                       @db.VarChar(250)
+  Nbredecolis                 String?                       @default("0,00") @db.VarChar(250)
+  PoidsNet                    String?                       @default("0,00") @db.VarChar(200)
+  ValeurMarchandise           String?                       @db.VarChar(250)
+  liaisonotdocumentsaremettre liaisonotdocumentsaremettre[]
+  liaisonregimeot             liaisonregimeot[]
+  agents                      agents?                       @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "ordrestransit_ibfk_1")
+  incoterm                    incoterm?                     @relation(fields: [Idincoterms], references: [IDIncoterm], onDelete: NoAction, onUpdate: NoAction, map: "ordrestransit_ibfk_2")
+  dossiers                    dossiers?                     @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "ordrestransit_ibfk_3")
+
+  @@index([IdAgent], map: "WDIDX_OrdresTransit_IdAgent")
+  @@index([Idincoterms], map: "WDIDX_OrdresTransit_Idincoterms")
+  @@index([NumeroOT], map: "WDIDX_OrdresTransit_NumeroOT")
+  @@index([NumeroSerie], map: "WDIDX_OrdresTransit_NumeroSerie")
+}
+
+model pays {
+  IDPays        BigInt  @id @default(autoincrement())
+  NomPays       String? @db.VarChar(150)
+  codePays3     String? @unique(map: "codePays3") @db.VarChar(3)
+  CodePays2     String? @unique(map: "CodePays2") @db.VarChar(2)
+  CodeNumerique Int?    @unique(map: "CodeNumerique") @default(0)
+  NomPaysEng    String? @db.VarChar(150)
+  lieux         lieux[]
+
+  @@index([NomPays], map: "WDIDX_Pays_NomPays")
+  @@index([NomPaysEng], map: "WDIDX_Pays_NomPaysEng")
+}
+
+model piecescaisses {
+  IDPiecesCaisses       BigInt                  @id @default(autoincrement())
+  NumeroPieceCaisse     String?                 @unique(map: "NumeroPieceCaisse") @db.VarChar(50)
+  IDDossiers            BigInt?                 @default(0)
+  MontantTotal          Decimal?                @default(0.000000) @db.Decimal(24, 6)
+  Observations          String?                 @db.VarChar(250)
+  idagentdemandeur      BigInt?                 @default(0)
+  DateheurePieceCaisse  DateTime?               @db.Timestamp(0)
+  idagentvalide         BigInt?                 @default(0)
+  DateHeureValidation   DateTime?               @db.Timestamp(0)
+  Valide                Int?                    @default(0) @db.TinyInt
+  Paye                  Int?                    @default(0) @db.TinyInt
+  DateHeureSaisiePaye   DateTime?               @db.Timestamp(0)
+  Motif                 String?                 @db.VarChar(150)
+  valide2               Int?                    @default(0) @db.TinyInt
+  idagentvalide2        BigInt?                 @default(0)
+  IDAgentpaye           BigInt?                 @default(0)
+  observationsPC        String?                 @db.VarChar(250)
+  elementspiecescaisses elementspiecescaisses[]
+  dossiers              dossiers?               @relation(fields: [IDDossiers], references: [IDDossiers], onDelete: NoAction, onUpdate: NoAction, map: "piecescaisses_ibfk_1")
+
+  @@index([IDAgentpaye], map: "WDIDX_PiecesCaisses_IDAgentpaye")
+  @@index([IDDossiers], map: "WDIDX_PiecesCaisses_IDDossiers")
+  @@index([Paye], map: "WDIDX_PiecesCaisses_Paye")
+  @@index([Valide], map: "WDIDX_PiecesCaisses_Valide")
+  @@index([idagentdemandeur], map: "WDIDX_PiecesCaisses_idagentdemandeur")
+  @@index([idagentvalide2], map: "WDIDX_PiecesCaisses_idagentvalide2")
+  @@index([valide2], map: "WDIDX_PiecesCaisses_valide2")
+}
+
+model produits {
+  IDProduits         BigInt               @id @default(autoincrement())
+  Libelle            String?              @db.VarChar(250)
+  NTS                String?              @unique(map: "NTS") @db.VarChar(15)
+  IDAgents           BigInt?              @default(0)
+  liaisonltaproduits liaisonltaproduits[]
+  liaisonlviproduits liaisonlviproduits[]
+  tarifs             tarifs[]
+
+  @@index([IDAgents], map: "WDIDX_Produits_IDAgents")
+  @@index([Libelle], map: "WDIDX_Produits_Libelle")
+}
+
+model regimedeclaration {
+  IDRegimeDeclaration      BigInt  @id @default(autoincrement())
+  LibelleRegimeDeclaration String? @db.VarChar(250)
+  Observations             String? @db.VarChar(250)
+  CodeRegimeDeclaration    String? @unique(map: "CodeRegimeDeclaration") @db.VarChar(50)
+
+  @@index([LibelleRegimeDeclaration], map: "WDIDX_RegimeDeclaration_LibelleRegimeDeclaration")
+}
+
+model regimeot {
+  IDRegimeOT      BigInt            @id @default(autoincrement())
+  LibelleRegimeOT String?           @db.VarChar(250)
+  Observations    String?           @db.VarChar(250)
+  CodeRegimeOT    String?           @unique(map: "CodeRegimeOT") @db.VarChar(50)
+  liaisonregimeot liaisonregimeot[]
+
+  @@index([LibelleRegimeOT], map: "WDIDX_RegimeOT_LibelleRegimeOT")
+}
+
+model reglements {
+  IDReglements     BigInt           @id @default(autoincrement())
+  IDFactures       BigInt?          @default(0)
+  Datereglement    DateTime?        @db.Date
+  MontantReglement Decimal?         @default(0.000000) @db.Decimal(24, 6)
+  IdModeReglement  BigInt?          @default(0)
+  IdAgent          BigInt?          @default(0)
+  Observations     String?          @db.VarChar(250)
+  modesreglements  modesreglements? @relation(fields: [IdModeReglement], references: [IDModesReglements], onDelete: NoAction, onUpdate: NoAction, map: "reglements_ibfk_1")
+  factures         factures?        @relation(fields: [IDFactures], references: [IDFactures], onDelete: NoAction, onUpdate: NoAction, map: "reglements_ibfk_2")
+  agents           agents?          @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "reglements_ibfk_3")
+
+  @@index([Datereglement], map: "WDIDX_Reglements_Datereglement")
+  @@index([IDFactures], map: "WDIDX_Reglements_IDFactures")
+  @@index([IdAgent], map: "WDIDX_Reglements_IdAgent")
+  @@index([IdModeReglement], map: "WDIDX_Reglements_IdModeReglement")
+}
+
+model relances {
+  IDRelances     BigInt    @id @default(autoincrement())
+  NumeroRelance  Int?      @default(0)
+  ContenuRelance String?   @db.VarChar(5000)
+  IDCLIENTS      BigInt?   @default(0)
+  DateRelance    DateTime? @db.Date
+  Envoyee        Int?      @default(0) @db.TinyInt
+  Observations   String?   @db.VarChar(250)
+  clients        clients?  @relation(fields: [IDCLIENTS], references: [IDCLIENTS], onDelete: NoAction, onUpdate: NoAction, map: "relances_ibfk_1")
+
+  @@index([IDCLIENTS], map: "WDIDX_Relances_IDCLIENTS")
+}
+
+model rubriques {
+  IDRubriques                    BigInt                           @id @default(autoincrement())
+  CodeRubrique                   String?                          @unique(map: "CodeRubrique") @db.VarChar(25)
+  libelleRubrique                String?                          @db.VarChar(200)
+  AFacturer                      Int?                             @default(0) @db.TinyInt
+  NumeroCompte                   String?                          @db.VarChar(10)
+  Observations                   String?                          @db.VarChar(30)
+  elementspiecescaisses          elementspiecescaisses[]
+  liaisoncotationsrubriques      liaisoncotationsrubriques[]
+  liaisonfacturesrubriques       liaisonfacturesrubriques[]
+  liaisonrubriquesfacturesrecues liaisonrubriquesfacturesrecues[]
+  rubriquesdescommissions        rubriquesdescommissions[]
+
+  @@index([libelleRubrique], map: "WDIDX_Rubriques_libelleRubrique")
+}
+
+model rubriquesdescommissions {
+  IDRubriquesDesCommissions BigInt     @id @default(autoincrement())
+  IDCLIENTS                 BigInt?    @default(0)
+  IDRubriques               BigInt?    @default(0)
+  CodeRubrique              String?    @db.VarChar(25)
+  clients                   clients?   @relation(fields: [IDCLIENTS], references: [IDCLIENTS], onDelete: NoAction, onUpdate: NoAction, map: "rubriquesdescommissions_ibfk_1")
+  rubriques                 rubriques? @relation(fields: [IDRubriques], references: [IDRubriques], onDelete: NoAction, onUpdate: NoAction, map: "rubriquesdescommissions_ibfk_2")
+
+  @@index([CodeRubrique], map: "WDIDX_RubriquesDesCommissions_CodeRubrique")
+  @@index([IDCLIENTS], map: "WDIDX_RubriquesDesCommissions_IDCLIENTS")
+  @@index([IDRubriques], map: "WDIDX_RubriquesDesCommissions_IDRubriques")
+}
+
+model sauvegardesbddocs {
+  IDSauvegardesBDDocs BigInt    @id @default(autoincrement())
+  CheminDossier       String?   @db.VarChar(255)
+  DateSauvegarde      DateTime? @db.Date
+}
+
+model statuts {
+  IDStatuts BigInt    @id @default(autoincrement())
+  libelle   String?   @db.VarChar(100)
+  clients   clients[]
+
+  @@index([libelle], map: "WDIDX_Statuts_libelle")
+}
+
+model structur {
+  IDSociete             BigInt  @id @default(autoincrement())
+  NomSociete            String? @db.VarChar(100)
+  adrSociete            String? @db.VarChar(100)
+  telSociete            String? @db.VarChar(15)
+  celSociete            String? @db.VarChar(15)
+  Emailstructur         String? @db.VarChar(75)
+  logoSociete           Bytes?
+  cheminlogo            String? @db.VarChar(255)
+  SigleNomCourt         String? @db.VarChar(150)
+  FormeJuridique        String? @db.VarChar(150)
+  Capital               String? @db.VarChar(100)
+  ActivitesPrincipales  String? @db.VarChar(150)
+  CNumeroCompteBancaire String? @db.VarChar(150)
+  NINEASociete          String? @unique(map: "NINEASociete") @db.VarChar(50)
+  RegistreCommerce      String? @db.VarChar(50)
+  NumeroOrbus           String? @unique(map: "NumeroOrbus") @db.VarChar(50)
+  cachetfacture         Bytes?
+  cachetlivraison       Bytes?
+  autrecachet           Bytes?
+
+  @@index([NomSociete], map: "WDIDX_structur_NomSociete")
+}
+
+model tarifs {
+  IDTaux     BigInt?   @default(0)
+  IDTarifs   BigInt    @id @default(autoincrement())
+  NTS        String?   @db.VarChar(15)
+  CodeTaux   String?   @db.VarChar(10)
+  CodeTaxe   String?   @db.VarChar(10)
+  IdAgent    BigInt?   @default(0)
+  IDTaxes    BigInt?   @default(0)
+  IDProduits BigInt?   @default(0)
+  taux       taux?     @relation(fields: [IDTaux], references: [IDTaux], onDelete: NoAction, onUpdate: NoAction, map: "tarifs_ibfk_1")
+  taxes      taxes?    @relation(fields: [IDTaxes], references: [IDTaxes], onDelete: NoAction, onUpdate: NoAction, map: "tarifs_ibfk_2")
+  produits   produits? @relation(fields: [IDProduits], references: [IDProduits], onDelete: NoAction, onUpdate: NoAction, map: "tarifs_ibfk_3")
+
+  @@index([CodeTaux], map: "WDIDX_Tarifs_CodeTaux")
+  @@index([CodeTaxe], map: "WDIDX_Tarifs_CodeTaxe")
+  @@index([IDProduits], map: "WDIDX_Tarifs_IDProduits")
+  @@index([IDTaux], map: "WDIDX_Tarifs_IDTaux")
+  @@index([IDTaxes], map: "WDIDX_Tarifs_IDTaxes")
+  @@index([IdAgent], map: "WDIDX_Tarifs_IdAgent")
+  @@index([NTS], map: "WDIDX_Tarifs_NTS")
+}
+
+model taux {
+  IDTaux               BigInt                 @id @default(autoincrement())
+  CodeTaux             String?                @unique(map: "CodeTaux") @db.VarChar(10)
+  Taux                 Float?                 @default(0)
+  IdAgent              BigInt?                @default(0)
+  liquidationsarticles liquidationsarticles[]
+  tarifs               tarifs[]
+
+  @@index([IdAgent], map: "WDIDX_Taux_IdAgent")
+}
+
+model taxes {
+  IDTaxes            BigInt             @id @default(autoincrement())
+  LibelleTaxe        String?            @unique(map: "LibelleTaxe") @db.VarChar(150)
+  CodeTaxe           String?            @unique(map: "CodeTaxe") @db.VarChar(10)
+  LibelleTaxeComplet String?            @db.VarChar(250)
+  IdAgent            BigInt?            @default(0)
+  Niveau             Int?               @default(0)
+  Base               String?            @db.VarChar(5)
+  complementstaxes   complementstaxes[]
+  tarifs             tarifs[]
+
+  @@index([IdAgent], map: "WDIDX_Taxes_IdAgent")
+  @@index([LibelleTaxeComplet], map: "WDIDX_Taxes_LibelleTaxeComplet")
+}
+
+model tectaxestaux {
+  IDTECTAXESTAUX     BigInt  @id @default(autoincrement())
+  NTS                String? @db.VarChar(15)
+  LibelleProduit     String? @db.VarChar(250)
+  IDTaxes            BigInt? @default(0)
+  Taux               Float?  @default(0)
+  CodeTaxe           String? @db.VarChar(10)
+  LibelleTaxe        String? @db.VarChar(150)
+  LibelleTaxeComplet String? @db.VarChar(250)
+  IDTauxTaxes        BigInt? @default(0)
+  CodeTauxTaxes      String? @db.VarChar(10)
+
+  @@index([CodeTauxTaxes], map: "WDIDX_TECTAXESTAUX_CodeTauxTaxes")
+  @@index([CodeTaxe], map: "WDIDX_TECTAXESTAUX_CodeTaxe")
+  @@index([IDTauxTaxes], map: "WDIDX_TECTAXESTAUX_IDTauxTaxes")
+  @@index([IDTaxes], map: "WDIDX_TECTAXESTAUX_IDTaxes")
+  @@index([LibelleProduit], map: "WDIDX_TECTAXESTAUX_LibelleProduit")
+  @@index([LibelleTaxe], map: "WDIDX_TECTAXESTAUX_LibelleTaxe")
+  @@index([LibelleTaxeComplet], map: "WDIDX_TECTAXESTAUX_LibelleTaxeComplet")
+  @@index([NTS], map: "WDIDX_TECTAXESTAUX_NTS")
+}
+
+model tiers {
+  IDTiers                       BigInt                          @id @default(autoincrement())
+  libtier                       String?                         @db.VarChar(75)
+  Observations                  String?                         @db.VarChar(250)
+  adresseTiers                  String?                         @db.VarChar(75)
+  TelTiers                      String?                         @db.VarChar(25)
+  CelTiers                      String?                         @db.VarChar(25)
+  EmailTiers                    String?                         @db.VarChar(250)
+  NINEATiers                    String?                         @db.VarChar(50)
+  SaisiLe                       DateTime?                       @db.Date
+  IdAgentSaisi                  BigInt?                         @default(0)
+  IDStatuts                     BigInt?                         @default(0)
+  Modifiele                     DateTime?                       @db.Date
+  idagentmodification           BigInt?
+  SiteWeb                       String?                         @db.VarChar(50)
+  liaisontiersdomainesactivites liaisontiersdomainesactivites[]
+
+  @@index([IDStatuts], map: "WDIDX_Tiers_IDStatuts")
+  @@index([IdAgentSaisi], map: "WDIDX_Tiers_IdAgentSaisi")
+  @@index([NINEATiers], map: "WDIDX_Tiers_NINEATiers")
+  @@index([idagentmodification], map: "WDIDX_Tiers_idagentmodification")
+  @@index([libtier], map: "WDIDX_Tiers_libtier")
+}
+
+model transports {
+  IDTransports                         BigInt           @id @default(autoincrement())
+  DateDepart                           DateTime?        @db.Date
+  IdLieuDepart                         BigInt?          @default(0)
+  idLieuArrive                         BigInt?          @default(0)
+  IdAgent                              BigInt?          @default(0)
+  IDMoyensTransport                    BigInt?          @default(0)
+  NumeroTitreTransport                 String?          @db.VarChar(150)
+  libelleTransport                     String?          @db.VarChar(100)
+  Observations                         String?          @db.VarChar(250)
+  DateArriveePrevue                    DateTime?        @db.Date
+  idbl                                 BigInt?          @default(0)
+  HeureArriveePrevue                   DateTime?        @db.Time(0)
+  NumeroEscale                         String?          @db.VarChar(50)
+  moyenstransport                      moyenstransport? @relation(fields: [IDMoyensTransport], references: [IDMoyensTransport], onDelete: NoAction, onUpdate: NoAction, map: "transports_ibfk_1")
+  lieux_transports_IdLieuDepartTolieux lieux?           @relation("transports_IdLieuDepartTolieux", fields: [IdLieuDepart], references: [IDLieux], onDelete: NoAction, onUpdate: NoAction, map: "transports_ibfk_2")
+  lieux_transports_idLieuArriveTolieux lieux?           @relation("transports_idLieuArriveTolieux", fields: [idLieuArrive], references: [IDLieux], onDelete: NoAction, onUpdate: NoAction, map: "transports_ibfk_3")
+  agents                               agents?          @relation(fields: [IdAgent], references: [IDAgents], onDelete: NoAction, onUpdate: NoAction, map: "transports_ibfk_4")
+
+  @@index([DateDepart], map: "WDIDX_Transports_DateDepart")
+  @@index([IDMoyensTransport], map: "WDIDX_Transports_IDMoyensTransport")
+  @@index([IdAgent], map: "WDIDX_Transports_IdAgent")
+  @@index([IdLieuDepart], map: "WDIDX_Transports_IdLieuDepart")
+  @@index([NumeroEscale], map: "WDIDX_Transports_NumeroEscale")
+  @@index([idLieuArrive], map: "WDIDX_Transports_idLieuArrive")
+  @@index([idbl], map: "WDIDX_Transports_idbl")
+  @@index([libelleTransport], map: "WDIDX_Transports_libelleTransport")
+}
+
+model tvatresor {
+  IDTVATRESOR BigInt  @id @default(autoincrement())
+  libelle     String? @db.VarChar(100)
+  Taux        Float?  @default(0)
+
+  @@index([libelle], map: "WDIDX_TVATRESOR_libelle")
+}
+
+model typeoperations {
+  IDTypeOperations     BigInt       @id @default(autoincrement())
+  LibelleTypeOperation String?      @db.VarChar(150)
+  DureeMax             Decimal?     @db.Decimal(19, 0)
+  operations           operations[]
+
+  @@index([LibelleTypeOperation], map: "WDIDX_TypeOperations_LibelleTypeOperation")
+}
+
+model typesdocuments {
+  IDTypesDocuments    BigInt      @id @default(autoincrement())
+  LibelleTypeDocument String?     @db.VarChar(150)
+  documents           documents[]
+
+  @@index([LibelleTypeDocument], map: "WDIDX_TypesDocuments_LibelleTypeDocument")
+}
+
+model typesdocumentsot {
+  IDTypesDocumentsOT          BigInt                        @id @default(autoincrement())
+  LibelleTypeDocumentsOT      String?                       @db.VarChar(150)
+  Observations                String?                       @db.VarChar(250)
+  liaisonotdocumentsaremettre liaisonotdocumentsaremettre[]
+
+  @@index([LibelleTypeDocumentsOT], map: "WDIDX_TypesDocumentsOT_LibelleTypeDocumentsOT")
+}
+
+model typesmoyenstransport {
+  IDTypesMoyensTransport    BigInt            @id @default(autoincrement())
+  LibelleTypeMoyenTransport String?           @db.VarChar(250)
+  moyenstransport           moyenstransport[]
+
+  @@index([LibelleTypeMoyenTransport], map: "WDIDX_TypesMoyensTransport_LibelleTypeMoyenTransport")
+}
+
+model typetc {
+  IDTypeTC  BigInt  @id @default(autoincrement())
+  LibTypeTC String? @db.VarChar(50)
+
+  @@index([LibTypeTC], map: "WDIDX_TypeTC_LibTypeTC")
+}
+
+model typetiers {
+  IDTypeTiers BigInt @id @default(autoincrement())
+}
+
+model unites {
+  IDunites     Int     @id @default(autoincrement())
+  LibelleUnite String? @db.VarChar(100)
+
+  @@index([LibelleUnite], map: "WDIDX_unites_LibelleUnite")
+}
+
+model unitesvolume {
+  IDUnitesVolume      BigInt  @id @default(autoincrement())
+  LibelleUnite_volume String? @map("LibelleUnite!volume") @db.VarChar(50)
+
+  @@index([LibelleUnite_volume], map: "WDIDX_UnitesVolume_LibelleUnite!volume")
+}
